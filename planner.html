@@ -92,6 +92,23 @@
     .planner-main {
       max-width: 44rem;
     }
+    .text-link {
+      color: var(--accent);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .text-link:hover {
+      text-decoration: underline;
+    }
+    .text-link:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .shortcut-row {
+      font-size: 0.88rem;
+      margin: -0.25rem 0 1rem;
+    }
     h1 {
       font-size: 1.35rem;
       font-weight: 600;
@@ -253,6 +270,17 @@
       margin-top: 1.5rem;
       line-height: 1.55;
     }
+    @media (max-width: 639px) {
+      #resultsSection:not(.hidden) .route-box {
+        position: sticky;
+        bottom: 0;
+        z-index: 20;
+        margin-top: 0.75rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+        border-top: 2px solid var(--border);
+        background: var(--surface);
+      }
+    }
     #resultsSection h2 { font-size: 1.05rem; margin: 1.25rem 0 0.65rem; }
     .results-lede {
       color: var(--muted);
@@ -277,6 +305,7 @@
     .route-box .actions-row {
       margin-top: 0.65rem;
     }
+    .route-box a:focus-visible {
       outline: 2px solid var(--accent-dim);
       outline-offset: 2px;
     }
@@ -296,6 +325,7 @@
   </header>
   <main id="main" class="planner-main">
   <h1>行程規劃</h1>
+  <p class="shortcut-row"><a href="index.html#route-heading" class="text-link">← 先開定番三站 Google 路線</a></p>
   <p class="lede">
     描述今天想怎麼約、選日期與大致時段，系統會從名單裡<strong>比對標籤與關鍵字</strong>排序建議，並顯示<strong>當日是否可能公休</strong>（有建檔才會精準）以及<strong>人潮預測</strong>（依區域＋週末與時段的啟發式，非 Google 即時數據）。
   </p>
@@ -353,8 +383,8 @@
     <div id="resultsList"></div>
     <div class="route-box" id="routeBox">
       <strong>已勾選站點的 Google 路線</strong>
-      <p class="result-meta" style="margin-top:0.4rem;">依勾選順序編排（可自行調整勾選順序：先取消後依序再勾）。</p>
-      <div class="actions-row" style="margin-top:0.65rem;">
+      <p class="result-meta route-hint">依勾選順序編排；手機可勾選後直接用底下「開啟路線」。</p>
+      <div class="actions-row">
         <button type="button" class="btn" id="walkBtn">走路</button>
         <button type="button" class="btn" id="transitBtn">大眾運輸</button>
         <button type="button" class="btn" id="driveBtn">開車</button>

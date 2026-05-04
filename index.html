@@ -15,7 +15,7 @@
       --muted: #9a958c;
       --accent: #c4a574;
       --accent-dim: #8f7a5c;
-      --hero-h: min(36vw, 260px);
+      --sticky-h: 4.25rem;
     }
     * { box-sizing: border-box; }
     .skip-link {
@@ -41,6 +41,11 @@
       line-height: 1.65;
       background: var(--bg);
       color: var(--text);
+    }
+    @media (max-width: 639px) {
+      body {
+        padding-bottom: calc(3rem + var(--sticky-h) + env(safe-area-inset-bottom, 0px));
+      }
     }
     .site-nav {
       margin: 0 -1rem 0;
@@ -86,50 +91,23 @@
       color: var(--accent);
       font-weight: 500;
     }
-    .hero {
-      position: relative;
-      margin: 0 -1rem 1.25rem;
-      border-radius: 0 0 18px 18px;
-      overflow: hidden;
-      min-height: var(--hero-h);
-      background: #141210;
-      border-bottom: 1px solid var(--border);
+    .page-head {
+      margin: 0 0 1rem;
+      padding: 0.35rem 0 0;
     }
-    /* 若有自行拍攝或可合法使用之首圖，可於此加入：
-       .hero--photo .hero-photo-img { display:block; width:100%; height:var(--hero-h); object-fit:cover; }
-       並在 <header> 內放入 <img class="hero-photo-img" src="images/hero.jpg" alt="描述" /> */
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1.35rem 1.25rem 1.5rem;
-      background: rgba(15, 15, 15, 0.72);
-      pointer-events: none;
-    }
-    .hero-overlay h1 {
-      font-size: clamp(1.35rem, 4vw, 1.75rem);
+    .page-head h1 {
+      font-size: clamp(1.25rem, 4.2vw, 1.55rem);
       font-weight: 600;
       letter-spacing: -0.02em;
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.4rem;
       line-height: 1.25;
     }
-    .hero-overlay .lede {
+    .page-head .lede {
       margin: 0;
-      max-width: 36rem;
-      font-size: 0.92rem;
-      color: rgba(232, 230, 227, 0.88);
-    }
-    h1.page-title {
-      font-size: 1.35rem;
-      margin: 0 0 0.35rem;
-    }
-    .intro-note {
+      font-size: 0.9rem;
       color: var(--muted);
-      font-size: 0.92rem;
-      margin: 0 0 1.35rem;
-      line-height: 1.55;
+      line-height: 1.5;
+      max-width: 38rem;
     }
     .intent-panel {
       border: 1px solid var(--border);
@@ -189,6 +167,136 @@
       padding: 1rem 1.15rem 1.15rem;
       background: var(--surface);
       margin-bottom: 1.75rem;
+    }
+    .route-bar--primary {
+      border-color: var(--accent-dim);
+      background: rgba(196, 165, 116, 0.06);
+      margin-bottom: 1.25rem;
+    }
+    .route-bar--primary h2 {
+      font-size: 1.05rem;
+    }
+    .stop-links {
+      list-style: none;
+      margin: 0 0 1rem;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .stop-links li {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .stop-links .stop-n {
+      color: var(--accent-dim);
+      font-weight: 600;
+      min-width: 1.25rem;
+    }
+    .stop-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .stop-links a:hover {
+      text-decoration: underline;
+    }
+    .stop-links a:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .btn-cta {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 0.85rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .transport-seg {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.35rem;
+      margin-top: 0.65rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 0.15rem;
+    }
+    .transport-seg .seg-btn {
+      flex: 1 1 auto;
+      min-width: 4.5rem;
+      padding: 0.5rem 0.65rem;
+      font-size: 0.82rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #1e1e1e;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .transport-seg .seg-btn[aria-pressed="true"] {
+      border-color: var(--accent-dim);
+      color: var(--accent);
+      background: rgba(196, 165, 116, 0.12);
+    }
+    .transport-seg .seg-btn:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+    }
+    .planner-prompt {
+      margin: 0 0 1.25rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .browse-block {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .browse-block > h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+      color: var(--muted);
+      letter-spacing: -0.01em;
+    }
+    .browse-block > .browse-hint {
+      margin: 0 0 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .route-sticky {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 35;
+      padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 639px) {
+      .route-sticky {
+        display: block;
+      }
+    }
+    .route-sticky .btn-cta {
+      margin: 0;
+      padding: 0.75rem 1rem;
     }
     .route-bar h2 {
       font-size: 1rem;
@@ -278,6 +386,11 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.5rem;
       align-items: stretch;
+    }
+    @media (max-width: 400px) {
+      .waterfall {
+        grid-template-columns: 1fr;
+      }
     }
     @media (min-width: 520px) {
       .waterfall {
@@ -372,7 +485,7 @@
       line-height: 1.45;
       letter-spacing: 0.04em;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       word-break: break-word;
@@ -560,19 +673,38 @@
     </div>
   </header>
   <main id="main">
-  <header class="hero" aria-hidden="false">
-    <div class="hero-overlay">
-      <h1>今晚去哪｜依品味的台北一條路</h1>
-      <p class="lede">
-        深夜感、黑膠、摩登復古、獨立店。先在上面寫下這次想找什麼，下方會隨機出現口袋推薦；完整分區請再往下瀏覽。
-      </p>
-    </div>
+  <header class="page-head">
+    <h1>今晚去哪｜朋友約會三站路線</h1>
+    <p class="lede">先開地圖出發；想避人潮、查日子或換別家，再用底下靈感與行程規劃。</p>
   </header>
 
+  <section class="route-bar route-bar--primary" aria-labelledby="route-heading">
+    <h2 id="route-heading">一鍵開 Google 三站路線</h2>
+    <ul class="stop-links" aria-label="各站 Google 地圖（三站順序）">
+      <li><span class="stop-n">①</span> <a href="https://www.google.com/maps/search/?api=1&amp;query=%E8%BF%B4%E5%BB%8A+Orbit+Coffee+%E5%8F%B0%E5%8C%97" target="_blank" rel="noopener noreferrer">迴廊 Orbit Coffee</a> · 摩登復古開場</li>
+      <li><span class="stop-n">②</span> <a href="https://www.google.com/maps/search/?api=1&amp;query=%E8%81%B2%E8%89%B2+Sounds+Good+%E5%8F%B0%E5%8C%97" target="_blank" rel="noopener noreferrer">聲色 Sounds Good</a> · 黑膠與氣氛</li>
+      <li><span class="stop-n">③</span> <a href="https://www.google.com/maps/search/?api=1&amp;query=%E8%95%AA%E5%92%96%E5%95%A1+%E5%8F%B0%E5%8C%97" target="_blank" rel="noopener noreferrer">蕪咖啡</a> · 獨立義式收尾</li>
+    </ul>
+    <a class="btn btn-primary btn-cta" id="openRoute" href="#" target="_blank" rel="noopener noreferrer">開啟三站路線（Google 地圖）</a>
+    <div class="transport-seg" role="group" aria-label="路線交通方式">
+      <button type="button" class="seg-btn" id="walkBtn" data-mode="walking" aria-pressed="true">走路</button>
+      <button type="button" class="seg-btn" id="transitBtn" data-mode="transit" aria-pressed="false">大眾運輸</button>
+      <button type="button" class="seg-btn" id="driveBtn" data-mode="driving" aria-pressed="false">開車</button>
+    </div>
+  </section>
+
+  <p class="planner-prompt">
+    要<strong>選日期</strong>、看<strong>公休風險</strong>與<strong>人潮推論</strong>，請用 <a href="planner.html" class="text-link">行程規劃</a>。口袋名單與靈感往下滑。
+  </p>
+
+  <div class="browse-block">
+    <h2 id="browse-heading">想換別家或逛靈感</h2>
+    <p class="browse-hint">以下與「一鍵三站」無關，適合改點、加點或先亂逛。</p>
+
   <section class="intent-panel" aria-labelledby="intent-heading">
-    <h2 id="intent-heading" class="intent-heading">這次的需求</h2>
+    <h2 id="intent-heading" class="intent-heading">這次的需求（選填）</h2>
     <p class="intent-hint">
-      隨機推薦在下方區塊。有打關鍵字時，「換一批」會優先從文案裡對得上的店抽選；對不到就用整份名單隨機補滿。
+      搭配「隨機六格」使用：打關鍵字後按「換一批」，會優先抽文案裡對得上的店。
     </p>
     <label class="sr-hidden" for="intentText">這次想找的地點、氣氛或區域（選填）</label>
     <textarea
@@ -587,29 +719,10 @@
 
   <section class="zone" aria-labelledby="z-random">
     <div class="zone-head">
-      <h2 id="z-random">隨機口袋推薦</h2>
-      <p id="randomSubline">載入中就會換一組卡片；格式與下方分區相同，點開可看詳細與 Google 地圖。</p>
+      <h2 id="z-random">隨機六格</h2>
+      <p id="randomSubline">載入中就會換一組卡片；點開可看詳細與 Google 地圖。</p>
     </div>
     <div class="waterfall" id="randomWaterfall"></div>
-  </section>
-
-  <p class="intro-note">
-    也可使用上方「<a href="planner.html" class="text-link">行程規劃</a>」依日期與人潮偏好排點。下方網格依鄰近大地標分區；出發前請確認營業時間。
-  </p>
-
-  <section class="route-bar" aria-labelledby="route-heading">
-    <h2 id="route-heading">建議三站動線</h2>
-    <ol class="route-steps">
-      <li><strong>迴廊 Orbit Coffee</strong> — 摩登復古開場</li>
-      <li><strong>聲色 Sounds Good</strong> — 黑膠與氣氛</li>
-      <li><strong>蕪咖啡</strong> — 獨立義式收尾</li>
-    </ol>
-    <div class="actions">
-      <a class="btn btn-primary" id="openRoute" href="#" target="_blank" rel="noopener noreferrer">開啟 Google 地圖路線（整條）</a>
-      <button type="button" class="btn" id="walkBtn">走路</button>
-      <button type="button" class="btn" id="transitBtn">大眾運輸</button>
-      <button type="button" class="btn" id="driveBtn">開車</button>
-    </div>
   </section>
 
   <!-- 鄰近大景點分區 · 網格並列 -->
@@ -625,7 +738,7 @@
         </div>
         <span class="tile-body">
           <strong>錘子咖啡</strong>
-          <span class="tile-tags">#自烘 #手沖 #外帶友善 #白系小店 #士東市場 #直白選豆</span>
+          <span class="tile-tags">#自烘 #外帶友善 #士東市場</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -644,7 +757,7 @@
         </div>
         <span class="tile-body">
           <strong>COFFEE FLAIR</strong>
-          <span class="tile-tags">#義式展演 #競賽系譜 #晴光 #自家烘焙 #甜點加分 #香氣選豆</span>
+          <span class="tile-tags">#義式展演 #晴光 #競賽系譜</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -663,7 +776,7 @@
         </div>
         <span class="tile-body">
           <strong>D23 Coffee Roasters</strong>
-          <span class="tile-tags">#自烘 #工業風 #街角店 #座位珍稀 #準時約 #乾淨有個性</span>
+          <span class="tile-tags">#自烘 #工業風 #街角店</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -682,7 +795,7 @@
         </div>
         <span class="tile-body">
           <strong>爐鍋咖啡</strong>
-          <span class="tile-tags">#自烘 #迪化街 #小藝埕 #老城散步 #安靜喝 #多據點</span>
+          <span class="tile-tags">#自烘 #迪化街 #小藝埕</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -701,7 +814,7 @@
         </div>
         <span class="tile-body">
           <strong>町‧如固咖啡 CHO café</strong>
-          <span class="tile-tags">#六十年老宅 #冠軍烘焙 #昆明街巷 #精品 #光影 #深度逛街</span>
+          <span class="tile-tags">#六十年老宅 #冠軍烘焙 #昆明街巷</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -720,7 +833,7 @@
         </div>
         <span class="tile-body">
           <strong>(beanroom)</strong>
-          <span class="tile-tags">#策展式 #配方豆 #莊園豆 #東區巷內 #感官敘事 #展間感</span>
+          <span class="tile-tags">#策展式 #配方豆 #東區巷內</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -730,7 +843,7 @@
         </div>
         <span class="tile-body">
           <strong>VWI by CHADWANG</strong>
-          <span class="tile-tags">#冠軍沖煮 #吧台儀式 #白三角窗 #細節控 #復興南路 #王策</span>
+          <span class="tile-tags">#冠軍沖煮 #白三角窗 #吧台儀式</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -749,7 +862,7 @@
         </div>
         <span class="tile-body">
           <strong>Oasis Coffee Roasters</strong>
-          <span class="tile-tags">#自烘 #城市綠洲 #多門市 #曲線清楚 #安全牌 #認真喝</span>
+          <span class="tile-tags">#自烘 #城市綠洲 #多門市</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -759,7 +872,7 @@
         </div>
         <span class="tile-body">
           <strong>迴廊 Orbit Coffee</strong>
-          <span class="tile-tags">#摩登復古 #動線第一站 #非網美亮面 #視覺對頻 #巷子咖啡</span>
+          <span class="tile-tags">#摩登復古 #動線第一站 #巷子咖啡</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -778,7 +891,7 @@
         </div>
         <span class="tile-body">
           <strong>聲色 Sounds Good</strong>
-          <span class="tile-tags">#黑膠 #新生南路 #音樂主題 #選曲 #話題神器 #建議第二站</span>
+          <span class="tile-tags">#黑膠 #新生南路 #選曲</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -788,7 +901,7 @@
         </div>
         <span class="tile-body">
           <strong>蕪咖啡</strong>
-          <span class="tile-tags">#義式 #獨立館 #深夜友善 #動線第三站 #收尾 #對話型</span>
+          <span class="tile-tags">#義式 #深夜友善 #獨立館</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
@@ -807,18 +920,24 @@
         </div>
         <span class="tile-body">
           <strong>Single Origin espresso &amp; roast</strong>
-          <span class="tile-tags">#單一產區 #吳興街 #老宅二樓 #清水模 #窗景綠意 #產區故事</span>
+          <span class="tile-tags">#單一產區 #老宅二樓 #清水模</span>
           <span class="tile-cta">詳情 →</span>
         </span>
       </button>
     </div>
   </section>
 
+  </div>
+
   </main>
 
   <footer>
-    上方橫幅為純色示意，不代表任何店家。卡片預設不載入外部圖片；若有合法實拍可置於 <code>images/venues/</code> 並在 <code>PLACES</code> 設定 <code>photo</code>。店名與路線以 Google 地圖與你編輯的 <code>STOPS</code> 為準。
+    卡片圖來自公開網頁（官網／平台）快取之本機檔，僅供本頁試排與對照視覺，版權仍屬原拍攝者與品牌；對外發布或商業使用前請改用自家實拍、官方授權或 Google Places 等合规管道。詳見 <code>scripts/fetch-venue-images.sh</code>。<strong>蕪咖啡</strong>未找到可自動下載的穩定圖址，仍以無圖欄呈現。
   </footer>
+
+  <div class="route-sticky" aria-hidden="false">
+    <a class="btn btn-primary btn-cta" id="openRouteSticky" href="#" target="_blank" rel="noopener noreferrer">開啟三站路線</a>
+  </div>
 
   <div class="backdrop" id="modalBackdrop" aria-hidden="true"></div>
   <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
@@ -867,29 +986,45 @@
     }
 
     function refreshLink() {
-      document.getElementById("openRoute").href = buildMapsUrl();
+      var url = buildMapsUrl();
+      document.getElementById("openRoute").href = url;
+      var sticky = document.getElementById("openRouteSticky");
+      if (sticky) {
+        sticky.href = url;
+      }
+    }
+
+    function syncTransportUi() {
+      document.querySelectorAll(".transport-seg .seg-btn").forEach(function (btn) {
+        var m = btn.getAttribute("data-mode");
+        btn.setAttribute("aria-pressed", m === travelMode ? "true" : "false");
+      });
+    }
+
+    function setTravelMode(mode) {
+      travelMode = mode;
+      refreshLink();
+      syncTransportUi();
     }
 
     document.getElementById("walkBtn").addEventListener("click", function () {
-      travelMode = "walking";
-      refreshLink();
+      setTravelMode("walking");
     });
     document.getElementById("transitBtn").addEventListener("click", function () {
-      travelMode = "transit";
-      refreshLink();
+      setTravelMode("transit");
     });
     document.getElementById("driveBtn").addEventListener("click", function () {
-      travelMode = "driving";
-      refreshLink();
+      setTravelMode("driving");
     });
     refreshLink();
+    syncTransportUi();
 
     var PLACES = {
       hammer: {
         title: "錘子咖啡",
         landmark: "鄰近士林官邸／士林夜市／北美館",
-        photo: null,
-        tags: "#自烘 #手沖 #外帶友善 #白系小店 #士東市場 #直白選豆",
+        photo: "images/venues/hammer.jpeg",
+        tags: "#自烘 #外帶友善 #士東市場",
         mapQuery: "錘子咖啡 士林 台北",
         detail:
           "士林士東市場旁的清爽白色小店，外帶與手沖並重；適合逛完士林夜市或北美館後，想把音量收束成兩人對話時來一杯。\n\n豆子選線直白，常客會把它當「認真但不炫技」的平日慰藉。"
@@ -897,8 +1032,8 @@
       "coffee-flair": {
         title: "COFFEE FLAIR",
         landmark: "鄰近圓山／花博／中山國小站",
-        photo: null,
-        tags: "#義式展演 #競賽系譜 #晴光 #自家烘焙 #甜點加分 #香氣選豆",
+        photo: "images/venues/coffee-flair.jpeg",
+        tags: "#義式展演 #晴光 #競賽系譜",
         mapQuery: "COFFEE FLAIR 台北",
         detail:
           "晴光與雙城街附近的自家烘焙店；吧台對義式的展演節奏與香氣路線清楚，也常見甜點控為抹茶類糕點而來。\n\n適合排給「先喝咖啡、再把話題延伸到甜點與旅行記憶」這種慢慢升温的約會。"
@@ -906,8 +1041,8 @@
       d23: {
         title: "D23 Coffee Roasters",
         landmark: "鄰近松江南京／小巨蛋／行天宮",
-        photo: null,
-        tags: "#自烘 #工業風 #街角店 #座位珍稀 #準時約 #乾淨有個性",
+        photo: "images/venues/d23.jpeg",
+        tags: "#自烘 #工業風 #街角店",
         mapQuery: "D23 Coffee Roasters 台北",
         detail:
           "中山區建國北路的街角性格店，工業系裝潢與自家烘焙是骨幹；座位不算多，適合約在準時、俐落的見面段落。\n\n風味走向常被形容為乾淨且有個性——若想展示「你懂獨立館」這一面，這裡很好切入。"
@@ -915,8 +1050,8 @@
       luguo: {
         title: "爐鍋咖啡",
         landmark: "鄰近大稻埕／迪化街／北門",
-        photo: null,
-        tags: "#自烘 #迪化街 #小藝埕 #老城散步 #安靜喝 #多據點",
+        photo: "images/venues/luguo.jpeg",
+        tags: "#自烘 #迪化街 #小藝埕",
         mapQuery: "爐鍋咖啡 小藝埕 台北",
         detail:
           "爐鍋在台北有多個據點；若以老城散步來規劃，迪化街「小藝埕」動線最容易接上霞光海報牆與南北貨氣味。\n\n品飲節奏偏安靜專注，適合把約會放在「慢慢走、最後用一杯咖啡落款」的那一天。"
@@ -924,8 +1059,8 @@
       cho: {
         title: "町‧如固咖啡 CHO café",
         landmark: "鄰近西門町／龍山寺／北門",
-        photo: null,
-        tags: "#六十年老宅 #冠軍烘焙 #昆明街巷 #精品 #光影 #深度逛街",
+        photo: "images/venues/cho.jpeg",
+        tags: "#六十年老宅 #冠軍烘焙 #昆明街巷",
         mapQuery: "町‧如固咖啡 CHO café 台北",
         detail:
           "萬華昆明街巷弄裡的老宅場域，空間本身就有時間厚度；烘焙與沖煮走精品路線，適合搭配「西門徒步—龍山寺—北門」的深度逛街。\n\n若對方喜歡老房子與光影，這裡話題很容易自然發生。"
@@ -933,8 +1068,8 @@
       beanroom: {
         title: "(beanroom)",
         landmark: "鄰近東區／忠孝復興／SOGO",
-        photo: null,
-        tags: "#策展式 #配方豆 #莊園豆 #東區巷內 #感官敘事 #展間感",
+        photo: "images/venues/beanroom.jpeg",
+        tags: "#策展式 #配方豆 #東區巷內",
         mapQuery: "(beanroom) 台北",
         detail:
           "忠孝東路四段巷內的新型態體驗空間：配方豆與莊園豆以策展方式呈現，並延伸到歌單、器物與感官敘事。\n\n約會策略可以很簡單：先把逛街的人潮留在人行道上，進門後改成「挑一支豆子當今晚的主題」。"
@@ -942,8 +1077,8 @@
       vwi: {
         title: "VWI by CHADWANG",
         landmark: "鄰近東區／忠孝復興／SOGO",
-        photo: null,
-        tags: "#冠軍沖煮 #吧台儀式 #白三角窗 #細節控 #復興南路 #王策",
+        photo: "images/venues/vwi.jpeg",
+        tags: "#冠軍沖煮 #白三角窗 #吧台儀式",
         mapQuery: "VWI by CHADWANG 台北",
         detail:
           "世界沖煮冠軍王策的品牌店，白色三角窗與吧台儀式感辨識度高；話題自然會落在「水質、粉層、萃取節奏」。\n\n適合已經略有默契、想把約會升級成「一起欣賞技藝」的組合。"
@@ -951,8 +1086,8 @@
       oasis: {
         title: "Oasis Coffee Roasters",
         landmark: "鄰近信義安和／永康／大安路",
-        photo: null,
-        tags: "#自烘 #城市綠洲 #多門市 #曲線清楚 #安全牌 #認真喝",
+        photo: "images/venues/oasis.jpeg",
+        tags: "#自烘 #城市綠洲 #多門市",
         mapQuery: "Oasis Coffee Roasters 台北",
         detail:
           "「城市裡的綠洲」不是口號而是動線：多家門市涵蓋安和與南京東等區域，烘焙曲線與風味說明清楚。\n\n當你想約「好喝又有安全感」而不冒險踩雷的日子，Oasis 通常是票選會過半的那張。"
@@ -960,8 +1095,8 @@
       orbit: {
         title: "迴廊 Orbit Coffee",
         landmark: "鄰近信義安和／永康／大安路",
-        photo: null,
-        tags: "#摩登復古 #動線第一站 #非網美亮面 #視覺對頻 #巷子咖啡",
+        photo: "images/venues/orbit.png",
+        tags: "#摩登復古 #動線第一站 #巷子咖啡",
         mapQuery: "迴廊 Orbit Coffee 台北",
         detail:
           "此頁將它放在建議三站動線的第一站：用意是先讓視覺與座位節奏「對頻」，再走進黑膠與深夜義式的段落。\n\n風格偏摩登復古，避開亮面網美流的千篇一律。"
@@ -969,8 +1104,8 @@
       soundsgood: {
         title: "聲色 Sounds Good",
         landmark: "鄰近大安森林公園／師大／新生南路",
-        photo: null,
-        tags: "#黑膠 #新生南路 #音樂主題 #選曲 #話題神器 #建議第二站",
+        photo: "images/venues/soundsgood.jpeg",
+        tags: "#黑膠 #新生南路 #選曲",
         mapQuery: "聲色 Sounds Good 台北",
         detail:
           "新生南路巷弄裡的黑膠選曲空間，店內收藏把約會現場變成一台共用播放器。\n\n第二站放這裡：對話若有空白，也有音樂可以替你撑場。"
@@ -979,7 +1114,7 @@
         title: "蕪咖啡",
         landmark: "鄰近大安森林公園／師大／新生南路",
         photo: null,
-        tags: "#義式 #獨立館 #深夜友善 #動線第三站 #收尾 #對話型",
+        tags: "#義式 #深夜友善 #獨立館",
         mapQuery: "蕪咖啡 台北",
         detail:
           "建議動線的第三站：義式與獨立館個性兼具，深夜友善的路線收尾。\n\n若白天已走很多路，這裡適合用一杯濃縮或奶咖把故事講完。"
@@ -987,8 +1122,8 @@
       "single-origin": {
         title: "Single Origin espresso & roast",
         landmark: "鄰近台北101／世貿／象山步道口",
-        photo: null,
-        tags: "#單一產區 #吳興街 #老宅二樓 #清水模 #窗景綠意 #產區故事",
+        photo: "images/venues/single-origin.jpeg",
+        tags: "#單一產區 #老宅二樓 #清水模",
         mapQuery: "Single Origin espresso & roast 台北",
         detail:
           "落腳信義吳興街老宅二樓，窗景引入綠意與日光；品牌長期以單一產區敘事見長。\n\n若約會前面安排在 101／世貿或象山步道，這裡適合當「把風味講深」的中繼站。"
