@@ -1,0 +1,60 @@
+{
+  "positive": [
+    { "term": "深夜咖啡", "weight": 3 },
+    { "term": "深夜", "weight": 2 },
+    { "term": "昭和", "weight": 2.5 },
+    { "term": "喫茶", "weight": 2.5 },
+    { "term": "黑膠", "weight": 2.5 },
+    { "term": "爵士咖啡", "weight": 2 },
+    { "term": "獨立咖啡", "weight": 2 },
+    { "term": "非連鎖", "weight": 2 },
+    { "term": "老屋", "weight": 2 },
+    { "term": "老宅", "weight": 2 },
+    { "term": "老建築", "weight": 2 },
+    { "term": "巷弄", "weight": 1.5 },
+    { "term": "隱身", "weight": 1.5 },
+    { "term": "選物店", "weight": 2 },
+    { "term": "設計咖啡", "weight": 1.5 },
+    { "term": "空間設計", "weight": 1.5 },
+    { "term": "義式咖啡", "weight": 1.5 },
+    { "term": "日茶夜酒", "weight": 2 },
+    { "term": "複合式", "weight": 1 },
+    { "term": "摩登復古", "weight": 2 },
+    { "term": "復古摩登", "weight": 2 },
+    { "term": "藝文空間", "weight": 1.5 },
+    { "term": "獨立書店", "weight": 1.5 },
+    { "term": "Kissa", "weight": 1.5 },
+    { "term": "jazz kissa", "weight": 2 }
+  ],
+  "negative": [
+    { "term": "連鎖咖啡", "weight": 2 },
+    { "term": "星巴克", "weight": 2 },
+    { "term": "路易莎", "weight": 1.5 },
+    { "term": "網美打卡", "weight": 2 },
+    { "term": "網美咖啡", "weight": 2 },
+    { "term": "十大打卡", "weight": 1.5 },
+    { "term": "超好拍網美", "weight": 1.5 }
+  ],
+  "search_queries": [
+    "台北 深夜 咖啡廳 獨立 推薦",
+    "台北 昭和 喫茶 咖啡",
+    "台北 黑膠 咖啡廳",
+    "台中 深夜 咖啡 老屋",
+    "台南 深夜 咖啡廳",
+    "台灣 獨立咖啡 空間設計",
+    "台北 大安 中山 咖啡廳 安靜 老屋",
+    "下北澤 jazz kissa 喫茶",
+    "大阪 中崎町 咖啡 選物"
+  ],
+  "block_domains": [
+    "instagram.com",
+    "facebook.com",
+    "threads.net",
+    "tiktok.com",
+    "linkedin.com",
+    "pinterest.com",
+    "zhihu.com",
+    "baidu.com",
+    "zhihu.cn"
+  ]
+}

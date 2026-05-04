@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>今晚去哪｜朋友約會路線</title>
+  <!-- 介面原則：Cursor Canvas design guidance — 扁平、層級清楚、裝飾色節制；避免裝飾性漸層與重陰影。 -->
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f0f0f;
+      --surface: #181818;
+      --border: #2a2a2a;
+      --text: #e8e6e3;
+      --muted: #9a958c;
+      --accent: #c4a574;
+      --accent-dim: #8f7a5c;
+      --hero-h: min(36vw, 260px);
+    }
+    * { box-sizing: border-box; }
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 100;
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .skip-link:focus {
+      left: 0.75rem;
+      top: 0.75rem;
+    }
+    body {
+      font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 0 1rem 3rem;
+      line-height: 1.65;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .site-nav {
+      margin: 0 -1rem 0;
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .site-nav-inner {
+      max-width: 72rem;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
+    }
+    .site-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .site-nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 1rem;
+      font-size: 0.86rem;
+    }
+    .site-nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .site-nav-links a:hover {
+      color: var(--text);
+    }
+    .site-nav-links a:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    .site-nav-links a[aria-current="page"] {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .hero {
+      position: relative;
+      margin: 0 -1rem 1.25rem;
+      border-radius: 0 0 18px 18px;
+      overflow: hidden;
+      min-height: var(--hero-h);
+      background: #141210;
+      border-bottom: 1px solid var(--border);
+    }
+    /* 若有自行拍攝或可合法使用之首圖，可於此加入：
+       .hero--photo .hero-photo-img { display:block; width:100%; height:var(--hero-h); object-fit:cover; }
+       並在 <header> 內放入 <img class="hero-photo-img" src="images/hero.jpg" alt="描述" /> */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.35rem 1.25rem 1.5rem;
+      background: rgba(15, 15, 15, 0.72);
+      pointer-events: none;
+    }
+    .hero-overlay h1 {
+      font-size: clamp(1.35rem, 4vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+      line-height: 1.25;
+    }
+    .hero-overlay .lede {
+      margin: 0;
+      max-width: 36rem;
+      font-size: 0.92rem;
+      color: rgba(232, 230, 227, 0.88);
+    }
+    h1.page-title {
+      font-size: 1.35rem;
+      margin: 0 0 0.35rem;
+    }
+    .intro-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0 0 1.35rem;
+      line-height: 1.55;
+    }
+    .intent-panel {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.15rem 1.15rem;
+      background: var(--surface);
+      margin-bottom: 1rem;
+    }
+    .intent-panel .intent-heading {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.01em;
+    }
+    .intent-panel .intent-hint {
+      margin: 0 0 0.65rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    #intentText {
+      width: 100%;
+      min-height: 4rem;
+      padding: 0.6rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #141414;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      resize: vertical;
+      margin-bottom: 0.65rem;
+    }
+    #intentText:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 1px;
+      border-color: var(--accent-dim);
+    }
+    .intent-panel .intent-actions {
+      margin: 0;
+    }
+    .intent-panel label.sr-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .route-bar {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.15rem 1.15rem;
+      background: var(--surface);
+      margin-bottom: 1.75rem;
+    }
+    .route-bar h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.65rem;
+    }
+    .route-steps {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .route-steps strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .actions {
+      margin: 1rem 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #222;
+      color: var(--text);
+      font-size: 0.92rem;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .btn:hover {
+      background: #2c2c2c;
+      border-color: #3d3d3d;
+    }
+    .btn-primary {
+      border-color: var(--accent-dim);
+      color: var(--accent);
+      background: rgba(196, 165, 116, 0.08);
+    }
+    .btn-primary:hover {
+      background: rgba(196, 165, 116, 0.14);
+    }
+    .btn:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+    }
+    .text-link {
+      color: var(--accent);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .text-link:hover {
+      text-decoration: underline;
+    }
+    .text-link:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .zone {
+      margin-bottom: 1.35rem;
+    }
+    .zone-head {
+      margin-bottom: 0.55rem;
+    }
+    .zone-head h2 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin: 0 0 0.2rem;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+    }
+    .zone-head p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    /* 網格式並列：一次看多張卡片，非縱向單欄瀑布 */
+    .waterfall {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      align-items: stretch;
+    }
+    @media (min-width: 520px) {
+      .waterfall {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.6rem;
+      }
+    }
+    @media (min-width: 768px) {
+      .waterfall {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.65rem;
+      }
+    }
+    @media (min-width: 1100px) {
+      .waterfall {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+    }
+    .tile {
+      display: grid;
+      grid-template-rows: 2fr 1fr;
+      height: 100%;
+      min-height: 11.25rem;
+      min-width: 0;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      color: inherit;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+
+    .tile:hover {
+      border-color: #3d3d3d;
+    }
+    .tile:focus-visible {
+      border-color: var(--accent-dim);
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+    }
+    .tile-cover {
+      width: 100%;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #222;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .tile-cover.short,
+    .tile-cover.tall {
+      /* 版面比例由 .tile 的 2fr / 1fr 統一決定 */
+      min-height: 0;
+    }
+    .tile-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .tile-cover--empty .tile-ph-note {
+      font-size: 0.62rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 0.35rem;
+      line-height: 1.35;
+      max-width: none;
+    }
+    .tile-body {
+      display: flex;
+      flex-direction: column;
+      padding: 0.45rem 0.5rem 0.5rem;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .tile-body strong {
+      display: block;
+      font-size: 0.82rem;
+      margin-bottom: 0.2rem;
+      line-height: 1.3;
+    }
+    .tile-tags {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--accent-dim);
+      line-height: 1.45;
+      letter-spacing: 0.04em;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+      margin-bottom: 0.15rem;
+      min-height: 0;
+    }
+    .tile-meta {
+      font-size: 0.68rem;
+      color: var(--accent-dim);
+      line-height: 1.35;
+      margin-bottom: 0.2rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .tile-blurb {
+      font-size: 0.7rem;
+      color: var(--muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 0.15rem;
+      flex: 1;
+      min-height: 0;
+    }
+    .tile-cta {
+      font-size: 0.68rem;
+      color: var(--accent);
+      margin-top: auto;
+    }
+    body.modal-open {
+      overflow: hidden;
+    }
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      z-index: 40;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal {
+      position: fixed;
+      z-index: 50;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -48%) scale(0.97);
+      width: min(34rem, calc(100vw - 1.5rem));
+      max-height: min(88vh, 640px);
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    }
+    .modal.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .modal-scroll {
+      max-height: min(88vh, 640px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-photo-slot {
+      width: 100%;
+      min-height: 140px;
+      background: #1e1e1e;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-photo-slot--has-photo img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      background: #222;
+    }
+    .modal-photo-empty {
+      margin: 0;
+      padding: 1.35rem 1.25rem;
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .modal-inner {
+      padding: 1.15rem 1.25rem 1.35rem;
+    }
+    .modal-inner h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+    .modal-landmark {
+      font-size: 0.8rem;
+      color: var(--accent-dim);
+      margin-bottom: 0.65rem;
+    }
+    .modal-detail {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin: 0 0 1rem;
+      white-space: pre-line;
+    }
+    .modal-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .modal-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.88rem;
+    }
+    .modal-links a:hover {
+      text-decoration: underline;
+    }
+    .modal-links a:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.65rem;
+      right: 0.65rem;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(24, 24, 24, 0.92);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.15rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+    }
+    .modal-close:hover {
+      background: #2a2a2a;
+    }
+    .modal-close:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+    }
+    .modal-wrap {
+      position: relative;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    footer code {
+      font-size: 0.85em;
+      background: #252525;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">到主要內容</a>
+  <header class="site-nav" aria-label="全站導覽">
+    <div class="site-nav-inner">
+      <span class="site-name">今晚去哪</span>
+      <nav class="site-nav-links" aria-label="頁面連結">
+        <a href="index.html" aria-current="page">口袋名單</a>
+        <a href="planner.html">行程規劃</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+  <header class="hero" aria-hidden="false">
+    <div class="hero-overlay">
+      <h1>今晚去哪｜依品味的台北一條路</h1>
+      <p class="lede">
+        深夜感、黑膠、摩登復古、獨立店。先在上面寫下這次想找什麼，下方會隨機出現口袋推薦；完整分區請再往下瀏覽。
+      </p>
+    </div>
+  </header>
+
+  <section class="intent-panel" aria-labelledby="intent-heading">
+    <h2 id="intent-heading" class="intent-heading">這次的需求</h2>
+    <p class="intent-hint">
+      隨機推薦在下方區塊。有打關鍵字時，「換一批」會優先從文案裡對得上的店抽選；對不到就用整份名單隨機補滿。
+    </p>
+    <label class="sr-hidden" for="intentText">這次想找的地點、氣氛或區域（選填）</label>
+    <textarea
+      id="intentText"
+      placeholder="例如：黑膠、不要太吵、大稻埕附近、適合聊到很晚…"
+      rows="3"
+      autocomplete="off"></textarea>
+    <div class="actions intent-actions">
+      <button type="button" class="btn btn-primary" id="btnRefreshRandom">換一批推薦</button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-random">
+    <div class="zone-head">
+      <h2 id="z-random">隨機口袋推薦</h2>
+      <p id="randomSubline">載入中就會換一組卡片；格式與下方分區相同，點開可看詳細與 Google 地圖。</p>
+    </div>
+    <div class="waterfall" id="randomWaterfall"></div>
+  </section>
+
+  <p class="intro-note">
+    也可使用上方「<a href="planner.html" class="text-link">行程規劃</a>」依日期與人潮偏好排點。下方網格依鄰近大地標分區；出發前請確認營業時間。
+  </p>
+
+  <section class="route-bar" aria-labelledby="route-heading">
+    <h2 id="route-heading">建議三站動線</h2>
+    <ol class="route-steps">
+      <li><strong>迴廊 Orbit Coffee</strong> — 摩登復古開場</li>
+      <li><strong>聲色 Sounds Good</strong> — 黑膠與氣氛</li>
+      <li><strong>蕪咖啡</strong> — 獨立義式收尾</li>
+    </ol>
+    <div class="actions">
+      <a class="btn btn-primary" id="openRoute" href="#" target="_blank" rel="noopener noreferrer">開啟 Google 地圖路線（整條）</a>
+      <button type="button" class="btn" id="walkBtn">走路</button>
+      <button type="button" class="btn" id="transitBtn">大眾運輸</button>
+      <button type="button" class="btn" id="driveBtn">開車</button>
+    </div>
+  </section>
+
+  <!-- 鄰近大景點分區 · 網格並列 -->
+  <section class="zone" aria-labelledby="z-hammer">
+    <div class="zone-head">
+      <h2 id="z-hammer">鄰近士林官邸／士林夜市／北美館</h2>
+      <p>天母與士林步行圈，適合看完展或逛完夜市後轉往安靜喝一杯。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="hammer" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty short" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>錘子咖啡</strong>
+          <span class="tile-tags">#自烘 #手沖 #外帶友善 #白系小店 #士東市場 #直白選豆</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-flair">
+    <div class="zone-head">
+      <h2 id="z-flair">鄰近圓山／花博／中山國小站</h2>
+      <p>晴光與雙城街一帶，可接花博散步或圓山捷運轉場。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="coffee-flair" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty tall" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>COFFEE FLAIR</strong>
+          <span class="tile-tags">#義式展演 #競賽系譜 #晴光 #自家烘焙 #甜點加分 #香氣選豆</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-d23">
+    <div class="zone-head">
+      <h2 id="z-d23">鄰近松江南京／小巨蛋／行天宮</h2>
+      <p>商務區與展演場館之間，適合活動前先喝咖啡定位。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="d23" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>D23 Coffee Roasters</strong>
+          <span class="tile-tags">#自烘 #工業風 #街角店 #座位珍稀 #準時約 #乾淨有個性</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-luguo">
+    <div class="zone-head">
+      <h2 id="z-luguo">鄰近大稻埕／迪化街／北門</h2>
+      <p>老城散步線終點，適合看完霞光海報牆後慢慢收尾。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="luguo" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty short" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>爐鍋咖啡</strong>
+          <span class="tile-tags">#自烘 #迪化街 #小藝埕 #老城散步 #安靜喝 #多據點</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-cho">
+    <div class="zone-head">
+      <h2 id="z-cho">鄰近西門町／龍山寺／北門</h2>
+      <p>萬華巷弄與西門徒步區；人潮與老宅氛圍落差很大的一區。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="cho" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty tall" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>町‧如固咖啡 CHO café</strong>
+          <span class="tile-tags">#六十年老宅 #冠軍烘焙 #昆明街巷 #精品 #光影 #深度逛街</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-east">
+    <div class="zone-head">
+      <h2 id="z-east">鄰近東區／忠孝復興／SOGO</h2>
+      <p>人潮多的商圈反差：鑽進巷弄後只剩咖啡香與低調光影。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="beanroom" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>(beanroom)</strong>
+          <span class="tile-tags">#策展式 #配方豆 #莊園豆 #東區巷內 #感官敘事 #展間感</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+      <button type="button" class="tile" data-place="vwi" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty short" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>VWI by CHADWANG</strong>
+          <span class="tile-tags">#冠軍沖煮 #吧台儀式 #白三角窗 #細節控 #復興南路 #王策</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-anhe">
+    <div class="zone-head">
+      <h2 id="z-anhe">鄰近信義安和／永康／大安路</h2>
+      <p>綠蔭與巷弄咖啡密度高的區域；動線柔軟好約。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="oasis" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty tall" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>Oasis Coffee Roasters</strong>
+          <span class="tile-tags">#自烘 #城市綠洲 #多門市 #曲線清楚 #安全牌 #認真喝</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+      <button type="button" class="tile" data-place="orbit" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>迴廊 Orbit Coffee</strong>
+          <span class="tile-tags">#摩登復古 #動線第一站 #非網美亮面 #視覺對頻 #巷子咖啡</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-park">
+    <div class="zone-head">
+      <h2 id="z-park">鄰近大安森林公園／師大／新生南路</h2>
+      <p>適合公園散步後，順路折進巷子裡延長對話。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="soundsgood" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty short" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>聲色 Sounds Good</strong>
+          <span class="tile-tags">#黑膠 #新生南路 #音樂主題 #選曲 #話題神器 #建議第二站</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+      <button type="button" class="tile" data-place="wu" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty tall" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>蕪咖啡</strong>
+          <span class="tile-tags">#義式 #獨立館 #深夜友善 #動線第三站 #收尾 #對話型</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="zone" aria-labelledby="z-101">
+    <div class="zone-head">
+      <h2 id="z-101">鄰近台北101／世貿／象山步道口</h2>
+      <p>信義計畫區外圍的巷弄深度；摩天輪與森林步道的中繼站。</p>
+    </div>
+    <div class="waterfall">
+      <button type="button" class="tile" data-place="single-origin" aria-haspopup="dialog">
+        <div class="tile-cover tile-cover--empty" aria-hidden="true">
+          <span class="tile-ph-note">無圖 · 詳情／地圖</span>
+        </div>
+        <span class="tile-body">
+          <strong>Single Origin espresso &amp; roast</strong>
+          <span class="tile-tags">#單一產區 #吳興街 #老宅二樓 #清水模 #窗景綠意 #產區故事</span>
+          <span class="tile-cta">詳情 →</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  </main>
+
+  <footer>
+    上方橫幅為純色示意，不代表任何店家。卡片預設不載入外部圖片；若有合法實拍可置於 <code>images/venues/</code> 並在 <code>PLACES</code> 設定 <code>photo</code>。店名與路線以 Google 地圖與你編輯的 <code>STOPS</code> 為準。
+  </footer>
+
+  <div class="backdrop" id="modalBackdrop" aria-hidden="true"></div>
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-wrap">
+      <button type="button" class="modal-close" id="modalClose" aria-label="關閉詳細視窗">×</button>
+      <div class="modal-scroll">
+        <div id="modalPhotoSlot" class="modal-photo-slot modal-photo-slot--empty"></div>
+        <div class="modal-inner">
+          <h3 id="modalTitle"></h3>
+          <p class="modal-landmark" id="modalLandmark"></p>
+          <p class="modal-detail" id="modalDetail"></p>
+          <div class="modal-links">
+            <a id="modalMap" href="#" target="_blank" rel="noopener noreferrer">Google 地圖開啟此店</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STOPS = [
+      "迴廊 Orbit Coffee 台北",
+      "聲色 Sounds Good 台北",
+      "蕪咖啡 台北"
+    ];
+    let travelMode = "walking";
+
+    function buildMapsUrl() {
+      const origin = encodeURIComponent(STOPS[0]);
+      const destination = encodeURIComponent(STOPS[STOPS.length - 1]);
+      const middle = STOPS.slice(1, -1).map(function (s) {
+        return encodeURIComponent(s);
+      }).join("|");
+      let url =
+        "https://www.google.com/maps/dir/?api=1" +
+        "&origin=" +
+        origin +
+        "&destination=" +
+        destination +
+        "&travelmode=" +
+        travelMode;
+      if (middle) {
+        url += "&waypoints=" + middle;
+      }
+      return url;
+    }
+
+    function refreshLink() {
+      document.getElementById("openRoute").href = buildMapsUrl();
+    }
+
+    document.getElementById("walkBtn").addEventListener("click", function () {
+      travelMode = "walking";
+      refreshLink();
+    });
+    document.getElementById("transitBtn").addEventListener("click", function () {
+      travelMode = "transit";
+      refreshLink();
+    });
+    document.getElementById("driveBtn").addEventListener("click", function () {
+      travelMode = "driving";
+      refreshLink();
+    });
+    refreshLink();
+
+    var PLACES = {
+      hammer: {
+        title: "錘子咖啡",
+        landmark: "鄰近士林官邸／士林夜市／北美館",
+        photo: null,
+        tags: "#自烘 #手沖 #外帶友善 #白系小店 #士東市場 #直白選豆",
+        mapQuery: "錘子咖啡 士林 台北",
+        detail:
+          "士林士東市場旁的清爽白色小店，外帶與手沖並重；適合逛完士林夜市或北美館後，想把音量收束成兩人對話時來一杯。\n\n豆子選線直白，常客會把它當「認真但不炫技」的平日慰藉。"
+      },
+      "coffee-flair": {
+        title: "COFFEE FLAIR",
+        landmark: "鄰近圓山／花博／中山國小站",
+        photo: null,
+        tags: "#義式展演 #競賽系譜 #晴光 #自家烘焙 #甜點加分 #香氣選豆",
+        mapQuery: "COFFEE FLAIR 台北",
+        detail:
+          "晴光與雙城街附近的自家烘焙店；吧台對義式的展演節奏與香氣路線清楚，也常見甜點控為抹茶類糕點而來。\n\n適合排給「先喝咖啡、再把話題延伸到甜點與旅行記憶」這種慢慢升温的約會。"
+      },
+      d23: {
+        title: "D23 Coffee Roasters",
+        landmark: "鄰近松江南京／小巨蛋／行天宮",
+        photo: null,
+        tags: "#自烘 #工業風 #街角店 #座位珍稀 #準時約 #乾淨有個性",
+        mapQuery: "D23 Coffee Roasters 台北",
+        detail:
+          "中山區建國北路的街角性格店，工業系裝潢與自家烘焙是骨幹；座位不算多，適合約在準時、俐落的見面段落。\n\n風味走向常被形容為乾淨且有個性——若想展示「你懂獨立館」這一面，這裡很好切入。"
+      },
+      luguo: {
+        title: "爐鍋咖啡",
+        landmark: "鄰近大稻埕／迪化街／北門",
+        photo: null,
+        tags: "#自烘 #迪化街 #小藝埕 #老城散步 #安靜喝 #多據點",
+        mapQuery: "爐鍋咖啡 小藝埕 台北",
+        detail:
+          "爐鍋在台北有多個據點；若以老城散步來規劃，迪化街「小藝埕」動線最容易接上霞光海報牆與南北貨氣味。\n\n品飲節奏偏安靜專注，適合把約會放在「慢慢走、最後用一杯咖啡落款」的那一天。"
+      },
+      cho: {
+        title: "町‧如固咖啡 CHO café",
+        landmark: "鄰近西門町／龍山寺／北門",
+        photo: null,
+        tags: "#六十年老宅 #冠軍烘焙 #昆明街巷 #精品 #光影 #深度逛街",
+        mapQuery: "町‧如固咖啡 CHO café 台北",
+        detail:
+          "萬華昆明街巷弄裡的老宅場域，空間本身就有時間厚度；烘焙與沖煮走精品路線，適合搭配「西門徒步—龍山寺—北門」的深度逛街。\n\n若對方喜歡老房子與光影，這裡話題很容易自然發生。"
+      },
+      beanroom: {
+        title: "(beanroom)",
+        landmark: "鄰近東區／忠孝復興／SOGO",
+        photo: null,
+        tags: "#策展式 #配方豆 #莊園豆 #東區巷內 #感官敘事 #展間感",
+        mapQuery: "(beanroom) 台北",
+        detail:
+          "忠孝東路四段巷內的新型態體驗空間：配方豆與莊園豆以策展方式呈現，並延伸到歌單、器物與感官敘事。\n\n約會策略可以很簡單：先把逛街的人潮留在人行道上，進門後改成「挑一支豆子當今晚的主題」。"
+      },
+      vwi: {
+        title: "VWI by CHADWANG",
+        landmark: "鄰近東區／忠孝復興／SOGO",
+        photo: null,
+        tags: "#冠軍沖煮 #吧台儀式 #白三角窗 #細節控 #復興南路 #王策",
+        mapQuery: "VWI by CHADWANG 台北",
+        detail:
+          "世界沖煮冠軍王策的品牌店，白色三角窗與吧台儀式感辨識度高；話題自然會落在「水質、粉層、萃取節奏」。\n\n適合已經略有默契、想把約會升級成「一起欣賞技藝」的組合。"
+      },
+      oasis: {
+        title: "Oasis Coffee Roasters",
+        landmark: "鄰近信義安和／永康／大安路",
+        photo: null,
+        tags: "#自烘 #城市綠洲 #多門市 #曲線清楚 #安全牌 #認真喝",
+        mapQuery: "Oasis Coffee Roasters 台北",
+        detail:
+          "「城市裡的綠洲」不是口號而是動線：多家門市涵蓋安和與南京東等區域，烘焙曲線與風味說明清楚。\n\n當你想約「好喝又有安全感」而不冒險踩雷的日子，Oasis 通常是票選會過半的那張。"
+      },
+      orbit: {
+        title: "迴廊 Orbit Coffee",
+        landmark: "鄰近信義安和／永康／大安路",
+        photo: null,
+        tags: "#摩登復古 #動線第一站 #非網美亮面 #視覺對頻 #巷子咖啡",
+        mapQuery: "迴廊 Orbit Coffee 台北",
+        detail:
+          "此頁將它放在建議三站動線的第一站：用意是先讓視覺與座位節奏「對頻」，再走進黑膠與深夜義式的段落。\n\n風格偏摩登復古，避開亮面網美流的千篇一律。"
+      },
+      soundsgood: {
+        title: "聲色 Sounds Good",
+        landmark: "鄰近大安森林公園／師大／新生南路",
+        photo: null,
+        tags: "#黑膠 #新生南路 #音樂主題 #選曲 #話題神器 #建議第二站",
+        mapQuery: "聲色 Sounds Good 台北",
+        detail:
+          "新生南路巷弄裡的黑膠選曲空間，店內收藏把約會現場變成一台共用播放器。\n\n第二站放這裡：對話若有空白，也有音樂可以替你撑場。"
+      },
+      wu: {
+        title: "蕪咖啡",
+        landmark: "鄰近大安森林公園／師大／新生南路",
+        photo: null,
+        tags: "#義式 #獨立館 #深夜友善 #動線第三站 #收尾 #對話型",
+        mapQuery: "蕪咖啡 台北",
+        detail:
+          "建議動線的第三站：義式與獨立館個性兼具，深夜友善的路線收尾。\n\n若白天已走很多路，這裡適合用一杯濃縮或奶咖把故事講完。"
+      },
+      "single-origin": {
+        title: "Single Origin espresso & roast",
+        landmark: "鄰近台北101／世貿／象山步道口",
+        photo: null,
+        tags: "#單一產區 #吳興街 #老宅二樓 #清水模 #窗景綠意 #產區故事",
+        mapQuery: "Single Origin espresso & roast 台北",
+        detail:
+          "落腳信義吳興街老宅二樓，窗景引入綠意與日光；品牌長期以單一產區敘事見長。\n\n若約會前面安排在 101／世貿或象山步道，這裡適合當「把風味講深」的中繼站。"
+      }
+    };
+
+    var RANDOM_SPOT_COUNT = 6;
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i];
+        a[i] = a[j];
+        a[j] = t;
+      }
+      return a;
+    }
+
+    function tokensFromIntent(intent) {
+      return intent
+        .trim()
+        .split(/[\s,，、]+/)
+        .filter(function (w) {
+          return w.length > 0;
+        });
+    }
+
+    function poolAndNote(intent) {
+      var allKeys = Object.keys(PLACES);
+      var tok = tokensFromIntent(intent);
+      if (!tok.length) {
+        return { keys: shuffle(allKeys.slice()), note: "從全部口袋名單隨機抽選六間；按「換一批」可打散重抽。" };
+      }
+      var matched = allKeys.filter(function (k) {
+        var d = PLACES[k];
+        var blob = d.title + "\n" + d.landmark + "\n" + (d.tags || "") + "\n" + d.detail;
+        return tok.some(function (t) {
+          return blob.indexOf(t) !== -1;
+        });
+      });
+      var primary = shuffle(matched.length ? matched.slice() : allKeys.slice());
+      var note;
+      if (!matched.length) {
+        note = "沒有直接對到關鍵字，已改為整份名單隨機。";
+      } else if (matched.length < RANDOM_SPOT_COUNT) {
+        note = "找到 " + matched.length + " 間與描述相近，會優先出現並用其他店家補滿六格。";
+      } else {
+        note = "已在相符的店家裡隨機抽選六間；換一批可看不同組合。";
+      }
+      return { keys: primary, note: note };
+    }
+
+    function uniquePick(primaryOrder, fillerOrder, maxN) {
+      var out = [];
+      var seen = {};
+      primaryOrder.forEach(function (k) {
+        if (out.length >= maxN) return;
+        if (seen[k]) return;
+        seen[k] = true;
+        out.push(k);
+      });
+      fillerOrder.forEach(function (k) {
+        if (out.length >= maxN) return;
+        if (seen[k]) return;
+        seen[k] = true;
+        out.push(k);
+      });
+      return out;
+    }
+
+    function randomCoverClasses() {
+      var u = Math.random();
+      if (u < 0.34) return "tile-cover tile-cover--empty short";
+      if (u < 0.67) return "tile-cover tile-cover--empty tall";
+      return "tile-cover tile-cover--empty";
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderRandomSpots() {
+      var wf = document.getElementById("randomWaterfall");
+      var sub = document.getElementById("randomSubline");
+      if (!wf) return;
+      var intentEl = document.getElementById("intentText");
+      var intent = intentEl ? intentEl.value : "";
+      var pack = poolAndNote(intent);
+      var allKeys = Object.keys(PLACES);
+      var picked = uniquePick(pack.keys, shuffle(allKeys.slice()), RANDOM_SPOT_COUNT);
+      wf.innerHTML = "";
+      picked.forEach(function (key) {
+        var data = PLACES[key];
+        if (!data) return;
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tile";
+        btn.setAttribute("data-place", key);
+        btn.setAttribute("aria-haspopup", "dialog");
+        btn.innerHTML =
+          '<div class="' +
+          randomCoverClasses() +
+          '" aria-hidden="true"><span class="tile-ph-note">無圖 · 詳情／地圖</span></div>' +
+          '<span class="tile-body"><strong>' +
+          escapeHtml(data.title) +
+          '</strong><span class="tile-tags">' +
+          escapeHtml((data.tags || "").trim() || "#口袋名單") +
+          '</span><span class="tile-cta">詳情 →</span></span>';
+        wf.appendChild(btn);
+      });
+      if (sub) sub.textContent = pack.note;
+      hydrateTilePhotos();
+    }
+
+    var backdrop = document.getElementById("modalBackdrop");
+    var modal = document.getElementById("detailModal");
+    var modalClose = document.getElementById("modalClose");
+    var modalPhotoSlot = document.getElementById("modalPhotoSlot");
+    var modalTitle = document.getElementById("modalTitle");
+    var modalLandmark = document.getElementById("modalLandmark");
+    var modalDetail = document.getElementById("modalDetail");
+    var modalMap = document.getElementById("modalMap");
+
+    function renderModalPhoto(data) {
+      modalPhotoSlot.className = "modal-photo-slot";
+      modalPhotoSlot.innerHTML = "";
+      if (data.photo) {
+        var img = document.createElement("img");
+        img.src = data.photo;
+        img.alt = data.title + " 店面照片";
+        modalPhotoSlot.appendChild(img);
+        modalPhotoSlot.classList.add("modal-photo-slot--has-photo");
+      } else {
+        var p = document.createElement("p");
+        p.className = "modal-photo-empty";
+        p.textContent =
+          "此項目尚未設定本機實拍檔。請用下方 Google 地圖街景，或至店家官方社群／官網確認空間；請勿使用來源不明的網路照片冒充現場。";
+        modalPhotoSlot.appendChild(p);
+        modalPhotoSlot.classList.add("modal-photo-slot--empty");
+      }
+    }
+
+    function hydrateTilePhotos() {
+      document.querySelectorAll(".tile[data-place]").forEach(function (btn) {
+        var key = btn.getAttribute("data-place");
+        var data = PLACES[key];
+        if (!data || !data.photo) return;
+        var wrap = btn.querySelector(".tile-cover");
+        if (!wrap) return;
+        wrap.classList.remove("tile-cover--empty");
+        wrap.removeAttribute("aria-hidden");
+        wrap.innerHTML = "";
+        var img = document.createElement("img");
+        img.src = data.photo;
+        img.alt = data.title + " 店面照片";
+        wrap.appendChild(img);
+      });
+    }
+
+    function openModal(key) {
+      var data = PLACES[key];
+      if (!data) return;
+      renderModalPhoto(data);
+      modalTitle.textContent = data.title;
+      modalLandmark.textContent = data.landmark;
+      modalDetail.textContent = data.detail;
+      modalMap.href =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(data.mapQuery);
+      backdrop.classList.add("is-open");
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      backdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      modalClose.focus();
+    }
+
+    function closeModal() {
+      backdrop.classList.remove("is-open");
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    document.body.addEventListener("click", function (e) {
+      var btn = e.target.closest(".tile[data-place]");
+      if (!btn) return;
+      openModal(btn.getAttribute("data-place"));
+    });
+
+    renderRandomSpots();
+
+    var btnRefreshRandom = document.getElementById("btnRefreshRandom");
+    if (btnRefreshRandom) {
+      btnRefreshRandom.addEventListener("click", renderRandomSpots);
+    }
+
+    modalClose.addEventListener("click", closeModal);
+    backdrop.addEventListener("click", closeModal);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+{
+  "generated_at": "2026-05-04T14:07:17",
+  "min_score": 2.0,
+  "results": [
+    {
+      "url": "https://mymarcy.tw/2024台北老宅咖啡廳精選｜10昭和風復古風歐風咖啡館/",
+      "title": "2026台北老宅咖啡廳精選｜35間昭和復古咖啡廳名單，文青最愛老屋咖啡 – 瑪西隨筆",
+      "score": 15.0,
+      "matched_positive": [
+        "深夜咖啡",
+        "深夜",
+        "昭和",
+        "喫茶",
+        "老屋",
+        "老宅",
+        "獨立書店",
+        "Kissa"
+      ],
+      "matched_negative": [
+        "網美咖啡"
+      ],
+      "error": null
+    },
+    {
+      "url": "https://maggieblog.tw/japanstyle-oldcoffee/",
+      "title": "台北11家日式復古咖啡廳推薦，日式昭和風咖啡，日系老宅懷舊系列，吃手作甜點，體會秒到日本風情 – 瑪姬幸福過日子",
+      "score": 2.5,
+      "matched_positive": [
+        "昭和",
+        "老宅"
+      ],
+      "matched_negative": [
+        "星巴克"
+      ],
+      "error": null
+    }
+  ],
+  "raw_attempts": [
+    {
+      "url": "https://www.zhihu.com/question/2032218776612116173",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/1989061806895952041",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/2023882371070469462",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/8890333655",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/64891820",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/623464404",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/635432306",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/20076879",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/1985433357757146170",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://www.zhihu.com/question/1989061806895952041/answers/updated",
+      "title": "",
+      "score": null,
+      "matched_positive": [],
+      "matched_negative": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://maggieblog.tw/japanstyle-oldcoffee/",
+      "title": "台北11家日式復古咖啡廳推薦，日式昭和風咖啡，日系老宅懷舊系列，吃手作甜點，體會秒到日本風情 – 瑪姬幸福過日子",
+      "score": 2.5,
+      "matched_positive": [
+        "昭和",
+        "老宅"
+      ],
+      "matched_negative": [
+        "星巴克"
+      ],
+      "error": null
+    },
+    {
+      "url": "https://mymarcy.tw/2024台北老宅咖啡廳精選｜10昭和風復古風歐風咖啡館/",
+      "title": "2026台北老宅咖啡廳精選｜35間昭和復古咖啡廳名單，文青最愛老屋咖啡 – 瑪西隨筆",
+      "score": 15.0,
+      "matched_positive": [
+        "深夜咖啡",
+        "深夜",
+        "昭和",
+        "喫茶",
+        "老屋",
+        "老宅",
+        "獨立書店",
+        "Kissa"
+      ],
+      "matched_negative": [
+        "網美咖啡"
+      ],
+      "error": null
+    }
+  ]
+}

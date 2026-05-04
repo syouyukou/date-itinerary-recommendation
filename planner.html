@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>行程規劃｜今晚去哪</title>
+  <!-- 介面原則：Cursor Canvas design guidance — 扁平、層級清楚；表單可聚焦狀態對齊常見 a11y 做法。 -->
+  <script src="data/places.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f0f0f;
+      --surface: #181818;
+      --border: #2a2a2a;
+      --text: #e8e6e3;
+      --muted: #9a958c;
+      --accent: #c4a574;
+      --accent-dim: #8f7a5c;
+      --warn: #c9a227;
+      --bad: #c45c5c;
+      --ok: #6b9f7a;
+    }
+    * { box-sizing: border-box; }
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 100;
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .skip-link:focus {
+      left: 0.75rem;
+      top: 0.75rem;
+    }
+    body {
+      font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 0 1rem 3rem;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .site-nav {
+      margin: 0 -1rem 1rem;
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .site-nav-inner {
+      max-width: 72rem;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
+    }
+    .site-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .site-nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 1rem;
+      font-size: 0.86rem;
+    }
+    .site-nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .site-nav-links a:hover {
+      color: var(--text);
+    }
+    .site-nav-links a:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    .site-nav-links a[aria-current="page"] {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .planner-main {
+      max-width: 44rem;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0.35rem 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .lede {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0 0 1.25rem;
+    }
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      background: var(--surface);
+      margin-bottom: 1rem;
+    }
+    .panel h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+    }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #141414;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      margin-bottom: 0.85rem;
+    }
+    textarea { min-height: 4.5rem; resize: vertical; }
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 1px;
+      border-color: var(--accent-dim);
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 520px) {
+      .row2 { grid-template-columns: 1fr; }
+    }
+    .tags-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 0.85rem;
+    }
+    .tags-grid label.inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.55rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0;
+    }
+    .tags-grid label.inline:focus-within {
+      border-color: var(--accent-dim);
+    }
+    .tags-grid input {
+      margin: 0;
+      accent-color: var(--accent-dim);
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #252525;
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover { background: #2f2f2f; }
+    .btn:focus-visible {
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+    }
+    .btn-primary {
+      border-color: var(--accent-dim);
+      color: var(--accent);
+      background: rgba(196, 165, 116, 0.1);
+    }
+    .btn-primary:hover { background: rgba(196, 165, 116, 0.16); }
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.95rem 1rem;
+      background: var(--surface);
+      margin-bottom: 0.65rem;
+    }
+    .result-card h3 {
+      font-size: 1rem;
+      margin: 0 0 0.35rem;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .badge {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.45rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .badge.open { border-color: rgba(107, 159, 122, 0.5); color: var(--ok); }
+    .badge.risk { border-color: rgba(201, 162, 39, 0.6); color: var(--warn); }
+    .badge.unknown { border-color: #444; color: var(--muted); }
+    .badge.crowd-low { color: #8eb89a; }
+    .badge.crowd-mid { color: var(--warn); }
+    .badge.crowd-high { color: var(--bad); }
+    .result-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0 0 0.45rem;
+    }
+    .pick {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .pick input { accent-color: var(--accent-dim); }
+    .footer-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 1.5rem;
+      line-height: 1.55;
+    }
+    #resultsSection h2 { font-size: 1.05rem; margin: 1.25rem 0 0.65rem; }
+    .results-lede {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0 0 0.75rem;
+      line-height: 1.55;
+    }
+    .route-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--accent-dim);
+      background: rgba(196, 165, 116, 0.06);
+    }
+    .route-box a {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .route-box .route-hint {
+      margin-top: 0.4rem;
+    }
+    .route-box .actions-row {
+      margin-top: 0.65rem;
+    }
+      outline: 2px solid var(--accent-dim);
+      outline-offset: 2px;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">到主要內容</a>
+  <header class="site-nav" aria-label="全站導覽">
+    <div class="site-nav-inner">
+      <span class="site-name">今晚去哪</span>
+      <nav class="site-nav-links" aria-label="頁面連結">
+        <a href="index.html">口袋名單</a>
+        <a href="planner.html" aria-current="page">行程規劃</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="planner-main">
+  <h1>行程規劃</h1>
+  <p class="lede">
+    描述今天想怎麼約、選日期與大致時段，系統會從名單裡<strong>比對標籤與關鍵字</strong>排序建議，並顯示<strong>當日是否可能公休</strong>（有建檔才會精準）以及<strong>人潮預測</strong>（依區域＋週末與時段的啟發式，非 Google 即時數據）。
+  </p>
+
+  <div class="panel">
+    <h2>你的需求</h2>
+    <label for="freeText">自由描述（例：黑膠、不要太吵、信義附近）</label>
+    <textarea id="freeText" placeholder="打字即可，會與店名、標籤、區域描述交叉比對…"></textarea>
+    <div class="row2">
+      <div>
+        <label for="tripDate">行程當天</label>
+        <input type="date" id="tripDate" required />
+      </div>
+      <div>
+        <label for="timeSlot">時段（影響人潮預測）</label>
+        <select id="timeSlot">
+          <option value="morning">上午</option>
+          <option value="noon" selected>中午</option>
+          <option value="afternoon">下午</option>
+          <option value="evening">傍晚</option>
+          <option value="night">晚上／深夜</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label for="stopCount">想排幾個點（最多）</label>
+        <select id="stopCount">
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div>
+        <label for="crowdPref">人潮偏好</label>
+        <select id="crowdPref">
+          <option value="neutral">都可以</option>
+          <option value="quiet">盡量安靜／少人</option>
+          <option value="okbusy">熱鬧沒關係</option>
+        </select>
+      </div>
+    </div>
+    <label>標籤（可複選，加權比對）</label>
+    <div class="tags-grid" id="tagCheckboxes"></div>
+    <div class="actions-row">
+      <button type="button" class="btn btn-primary" id="btnPlan">產生建議</button>
+      <button type="button" class="btn" id="btnPickTop">勾選前Ｎ個建議</button>
+    </div>
+  </div>
+
+  <section id="resultsSection" class="hidden">
+    <h2>建議清單</h2>
+    <p class="results-lede">依吻合度排序；營業狀態見各卡徽章。若要精準開關店時間，請點連結至 Google 地圖。</p>
+    <div id="resultsList"></div>
+    <div class="route-box" id="routeBox">
+      <strong>已勾選站點的 Google 路線</strong>
+      <p class="result-meta" style="margin-top:0.4rem;">依勾選順序編排（可自行調整勾選順序：先取消後依序再勾）。</p>
+      <div class="actions-row" style="margin-top:0.65rem;">
+        <button type="button" class="btn" id="walkBtn">走路</button>
+        <button type="button" class="btn" id="transitBtn">大眾運輸</button>
+        <button type="button" class="btn" id="driveBtn">開車</button>
+        <a class="btn btn-primary" id="openRoute" href="#" target="_blank" rel="noopener noreferrer">開啟 Google 地圖路線</a>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <p class="footer-note">
+    說明：無 API 金鑰時，「當日是否開店」僅能依本機名單中的 <code>schedule</code> 或「週一常休」等提示推斷；Google 地圖的即時營業與「熱門時段」圖表仍以官方 App／網頁為準。預測人潮為<strong>規則式推論</strong>，不能取代實際現場狀況。
+  </p>
+
+  <script>
+    (function () {
+      var DAY_NAMES = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+      var places = window.PLANNER_PLACES || [];
+      var travelMode = "walking";
+
+      function todayISO() {
+        var d = new Date();
+        var m = String(d.getMonth() + 1).padStart(2, "0");
+        var day = String(d.getDate()).padStart(2, "0");
+        return d.getFullYear() + "-" + m + "-" + day;
+      }
+
+      function allTags() {
+        var s = {};
+        places.forEach(function (p) {
+          (p.tags || []).forEach(function (t) {
+            s[t] = true;
+          });
+        });
+        return Object.keys(s).sort(function (a, b) {
+          return a.localeCompare(b, "zh-Hant");
+        });
+      }
+
+      function buildTagUI() {
+        var host = document.getElementById("tagCheckboxes");
+        allTags().forEach(function (tag) {
+          var id = "tag-" + encodeURIComponent(tag).replace(/%/g, "");
+          var lab = document.createElement("label");
+          lab.className = "inline";
+          lab.setAttribute("for", id);
+          var inp = document.createElement("input");
+          inp.type = "checkbox";
+          inp.value = tag;
+          inp.id = id;
+          lab.appendChild(inp);
+          lab.appendChild(document.createTextNode(tag));
+          host.appendChild(lab);
+        });
+      }
+
+      function selectedTags() {
+        return Array.prototype.slice
+          .call(document.querySelectorAll("#tagCheckboxes input:checked"))
+          .map(function (i) {
+            return i.value;
+          });
+      }
+
+      function openStatus(place, dateStr) {
+        var d = new Date(dateStr + "T12:00:00");
+        var wd = d.getDay();
+        var dayName = DAY_NAMES[wd];
+        if (place.schedule && Object.prototype.hasOwnProperty.call(place.schedule, String(wd))) {
+          var rule = place.schedule[wd];
+          if (!rule || rule.closed) {
+            return {
+              kind: "closed",
+              text: dayName + " 公休（依本機建檔）"
+            };
+          }
+          return {
+            kind: "open",
+            text: dayName + " " + rule.from + "–" + rule.to + "（參考，請再查地圖）"
+          };
+        }
+        if (place.closedIfMonday && wd === 1) {
+          return {
+            kind: "risk",
+            text: dayName + "：許多獨立館固定公休，務必查地圖"
+          };
+        }
+        return {
+          kind: "unknown",
+          text: dayName + "：營業未建檔，請以 Google 地圖為準"
+        };
+      }
+
+      function crowdNumeric(place, dateStr, slot) {
+        var d = new Date(dateStr + "T12:00:00");
+        var weekend = d.getDay() === 0 || d.getDay() === 6;
+        var level = 1;
+        var blob = (place.district || "") + (place.landmark || "") + (place.crowdAreaNote || "");
+        if (/信義|東區|西門|士林|SOGO|101|夜市|西門町/.test(blob)) {
+          level++;
+        }
+        if (weekend && (slot === "noon" || slot === "afternoon")) {
+          level++;
+        }
+        if (slot === "night" && /商圈|東區|信義|西門/.test(blob)) {
+          level++;
+        }
+        if (place.tags && (place.tags.indexOf("巷弄") !== -1 || place.tags.indexOf("老宅") !== -1)) {
+          level = Math.max(1, level - 1);
+        }
+        return Math.min(3, level);
+      }
+
+      function crowdPrediction(place, dateStr, slot, pref) {
+        var n = crowdNumeric(place, dateStr, slot);
+        if (pref === "quiet") {
+          n = Math.max(1, n - 1);
+        }
+        if (pref === "okbusy") {
+          n = Math.min(3, n + 1);
+        }
+        n = Math.max(1, Math.min(3, n));
+        var labels = ["低", "中", "高"];
+        var explain = [
+          "推論：時段與位置相對有利，座位通常較好等（仍受活氣、天氣影響）。",
+          "推論：一般熱鬧程度，可預留排隊或等一下座位的時間。",
+          "推論：人潮偏多機率高；建議早出發或改較冷門時段。"
+        ];
+        var cls = ["crowd-low", "crowd-mid", "crowd-high"][n - 1];
+        return {
+          label: labels[n - 1],
+          explain: explain[n - 1],
+          cls: cls,
+          note: place.crowdAreaNote || ""
+        };
+      }
+
+      function scorePlace(place, textNorm, tags, pref) {
+        var s = 0;
+        tags.forEach(function (t) {
+          if (place.tags && place.tags.indexOf(t) !== -1) {
+            s += 4;
+          }
+        });
+        var blob = place.name + " " + place.intro + " " + place.landmark + " " + (place.district || "");
+        if (textNorm.length >= 2) {
+          for (var i = 0; i < textNorm.length - 1; i++) {
+            var two = textNorm.slice(i, i + 2);
+            if (blob.indexOf(two) !== -1) {
+              s += 1.2;
+            }
+          }
+        }
+        textNorm.split(/\s+/).forEach(function (w) {
+          if (w.length < 2) {
+            return;
+          }
+          if (blob.indexOf(w) !== -1) {
+            s += 2.5;
+          }
+        });
+        place.tags.forEach(function (t) {
+          if (textNorm.indexOf(t) !== -1) {
+            s += 3;
+          }
+        });
+        if (pref === "quiet") {
+          var n = crowdNumeric(place, document.getElementById("tripDate").value, document.getElementById("timeSlot").value);
+          s -= (n - 1) * 1.2;
+          if (place.tags.indexOf("巷弄") !== -1 || place.tags.indexOf("老宅") !== -1) {
+            s += 1.5;
+          }
+        }
+        return Math.round(s * 10) / 10;
+      }
+
+      function renderResults(sorted) {
+        var host = document.getElementById("resultsList");
+        host.innerHTML = "";
+        var dateStr = document.getElementById("tripDate").value;
+        var slot = document.getElementById("timeSlot").value;
+        var pref = document.getElementById("crowdPref").value;
+
+        sorted.forEach(function (item, idx) {
+          var p = item.place;
+          var os = openStatus(p, dateStr);
+          var cr = crowdPrediction(p, dateStr, slot, pref);
+          var card = document.createElement("div");
+          card.className = "result-card";
+          var h = document.createElement("h3");
+          h.textContent = idx + 1 + ". " + p.name;
+          card.appendChild(h);
+          var badges = document.createElement("div");
+          badges.className = "badges";
+          var bOpen = document.createElement("span");
+          bOpen.className = "badge " + (os.kind === "open" ? "open" : os.kind === "risk" ? "risk" : os.kind === "closed" ? "" : "unknown");
+          if (os.kind === "closed") {
+            bOpen.style.borderColor = "rgba(196,92,92,0.5)";
+            bOpen.style.color = "var(--bad)";
+          }
+          bOpen.textContent = "營業：" + os.text;
+          badges.appendChild(bOpen);
+          var bCrowd = document.createElement("span");
+          bCrowd.className = "badge " + cr.cls;
+          bCrowd.textContent = "人潮預測：" + cr.label + "（規則式）";
+          badges.appendChild(bCrowd);
+          card.appendChild(badges);
+          var meta = document.createElement("p");
+          meta.className = "result-meta";
+          meta.textContent = p.landmark + " · " + p.district;
+          card.appendChild(meta);
+          var intro = document.createElement("p");
+          intro.className = "result-meta";
+          intro.textContent = (p.tags || []).join(" · ") + " — " + p.intro;
+          card.appendChild(intro);
+          var crowdP = document.createElement("p");
+          crowdP.className = "result-meta";
+          crowdP.textContent = cr.explain + (cr.note ? "（" + cr.note + "）" : "");
+          card.appendChild(crowdP);
+          var mapLink = document.createElement("a");
+          mapLink.href =
+            "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.mapQuery);
+          mapLink.target = "_blank";
+          mapLink.rel = "noopener noreferrer";
+          mapLink.textContent = "Google 地圖（對照營業／熱門時段）";
+          mapLink.style.color = "var(--accent)";
+          mapLink.style.fontSize = "0.88rem";
+          card.appendChild(mapLink);
+
+          var pick = document.createElement("div");
+          pick.className = "pick";
+          var cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.dataset.mapQuery = p.mapQuery;
+          cb.className = "stop-check";
+          var lid = "stop-" + p.id;
+          cb.id = lid;
+          var lbl = document.createElement("label");
+          lbl.setAttribute("for", lid);
+          lbl.textContent = "納入下方多點路線";
+          lbl.style.cursor = "pointer";
+          pick.appendChild(cb);
+          pick.appendChild(lbl);
+          card.appendChild(pick);
+
+          host.appendChild(card);
+        });
+
+        document.querySelectorAll(".stop-check").forEach(function (c) {
+          c.addEventListener("change", refreshRouteLink);
+        });
+      }
+
+      function runPlan() {
+        var dateStr = document.getElementById("tripDate").value;
+        if (!dateStr) {
+          alert("請選行程日期");
+          return;
+        }
+        var text = document.getElementById("freeText").value.trim();
+        var textNorm = text.replace(/\s+/g, " ");
+        var tags = selectedTags();
+        var maxN = parseInt(document.getElementById("stopCount").value, 10) || 3;
+        var pref = document.getElementById("crowdPref").value;
+
+        var ranked = places
+          .map(function (p) {
+            return { place: p, score: scorePlace(p, textNorm, tags, pref) };
+          })
+          .sort(function (a, b) {
+            return b.score - a.score;
+          });
+
+        var top = ranked.slice(0, Math.max(maxN + 4, 8));
+                renderResults(top);
+        document.getElementById("resultsSection").classList.remove("hidden");
+        refreshRouteLink();
+      }
+
+      function picksOrder() {
+        var ordered = [];
+        document.querySelectorAll(".result-card .stop-check:checked").forEach(function (cb) {
+          ordered.push(cb.dataset.mapQuery);
+        });
+        return ordered;
+      }
+
+      function buildMapsUrl(stops) {
+        if (stops.length === 0) {
+          return "#";
+        }
+        if (stops.length === 1) {
+          return (
+            "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(stops[0])
+          );
+        }
+        var origin = encodeURIComponent(stops[0]);
+        var dest = encodeURIComponent(stops[stops.length - 1]);
+        var mid = stops
+          .slice(1, -1)
+          .map(function (s) {
+            return encodeURIComponent(s);
+          })
+          .join("|");
+        var url =
+          "https://www.google.com/maps/dir/?api=1&origin=" +
+          origin +
+          "&destination=" +
+          dest +
+          "&travelmode=" +
+          travelMode;
+        if (mid) {
+          url += "&waypoints=" + mid;
+        }
+        return url;
+      }
+
+      function refreshRouteLink() {
+        var stops = picksOrder();
+        var a = document.getElementById("openRoute");
+        a.href = buildMapsUrl(stops);
+        if (stops.length === 0) {
+          a.textContent = "開啟 Google 地圖路線（請先勾選站點）";
+        } else {
+          a.textContent = "開啟 Google 地圖路線（" + stops.length + " 點）";
+        }
+      }
+
+      document.getElementById("tripDate").value = todayISO();
+      buildTagUI();
+
+      document.getElementById("btnPlan").addEventListener("click", runPlan);
+      document.getElementById("btnPickTop").addEventListener("click", function () {
+        var n = parseInt(document.getElementById("stopCount").value, 10) || 3;
+        var boxes = document.querySelectorAll(".result-card .stop-check");
+        boxes.forEach(function (b, i) {
+          b.checked = i < n;
+        });
+        refreshRouteLink();
+      });
+
+      document.getElementById("walkBtn").addEventListener("click", function () {
+        travelMode = "walking";
+        refreshRouteLink();
+      });
+      document.getElementById("transitBtn").addEventListener("click", function () {
+        travelMode = "transit";
+        refreshRouteLink();
+      });
+      document.getElementById("driveBtn").addEventListener("click", function () {
+        travelMode = "driving";
+        refreshRouteLink();
+      });
+    })();
+  </script>
+</body>
+</html>
